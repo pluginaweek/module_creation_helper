@@ -1,0 +1,97 @@
+= module_creation_helper
+
+module_creation_helper adds a helper method for creating new modules and classes
+at runtime.
+
+== Resources
+
+Wiki
+
+* http://wiki.pluginaweek.org/Module_creation_helper
+
+Announcement
+
+* http://www.pluginaweek.org/
+
+Source
+
+* http://svn.pluginaweek.org/trunk/plugins/ruby/module/module_creation_helper
+
+Development
+
+* http://dev.pluginaweek.org/browser/trunk/plugins/ruby/module/module_creation_helper
+
+== Description
+
+Creating modules and classes at runtime isn't the easiest and most intuitive
+process that Ruby could have provided.  Although often used for anonymous
+classes, there are many times where you will want to associate a runtime class
+with an actual name.
+
+Normally, you would create new classes and associate them with a name like so:
+
+  >> c = Class.new
+  => #<Class:0x480e388>
+  >> Object.const_set('Foo', c)
+  => Foo
+
+Although this isn't very hard, there are two problems:
+(1) It's a repetitive process that should be DRYed in the same way that chaining
+methods has been dried.
+(2) Callbacks that are invoked while the class is being created do not have
+access to the name of the class.
+
+To understand the second problem, consider the following:
+
+  class Foo
+    def self.inherited(base)
+      puts "inherited class: #{base}, name: #{base.name}"
+    end
+  end
+
+When a class inherits from Foo, Ruby will invoke the +inherited+ callback.  For
+example,
+
+  >> c = Class.new(Foo)
+  inherited class: #<Class:0x47fb92c>, name:
+  => #<Class:0x47fb92c>
+
+As you can see from output in this example, since the class has not yet been
+assigned to a constant, it is anonymous and does not yet have a name.
+
+To address these two issues, the functionality is encapsulated into a new method,
+Module#create.  Since the method is defined in Module, it is also available to
+Class since Class inherits from Module.
+
+Rather than defining new modules/classes using Module#new/Class#new, this plugin
+uses class_eval on the object's parent.  This allows names to be immediately
+associated with the class/module regardless of whether it is currently being
+evaluated or has already been evaluated.
+
+Using the same example as before,
+
+  >> c = Class.create('Bar', :superclass => Foo)
+  inherited class: Bar, name: Bar
+  => Bar
+
+As you can see, the name of the class is now available during the +inherited+
+callback and is automatically assigned to the 'Bar' constant in Object.  In
+addition to specifying the superclass, you can also specify the parent
+module/class like so:
+
+  >> c = Class.create('Bar', :superclass => Foo, :parent => MyModule)
+  inherited class: MyModule::Bar, name: MyModule::Bar
+  => MyModule::Bar
+
+Finally, as you normally could when creating a new class, you can provide an
+additional block that defines the body of the class.  For example,
+
+  >> c = Class.create('Bar', :superclass => Foo, :parent => MyModule) do
+  ?>   def say_hello
+  ?>     'hello'
+  ?>   end
+  ?> end
+  inherited class: MyModule::Bar, name: MyModule::Bar
+  => Bar
+  >> Bar.new.say_hello
+  => "hello"
