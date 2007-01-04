@@ -33,13 +33,13 @@ module PluginAWeek #:nodoc:
           raise ArgumentError, 'Modules cannot have superclasses' if options[:superclass] && self.to_s == 'Module'
           
           options.reverse_merge!(
-            :superclass => Object,
-            :parent => Object
+            :superclass => ::Object,
+            :parent => ::Object
           )
           parent = options[:parent]
           superclass = options[:superclass]
           
-          if superclass != Object
+          if superclass != ::Object
             superclass = " < ::#{superclass}"
           else
             superclass = ''
