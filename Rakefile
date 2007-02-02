@@ -4,7 +4,7 @@ require 'rake/gempackagetask'
 require 'rake/contrib/sshpublisher'
 
 PKG_NAME           = 'module_creation_helper'
-PKG_VERSION        = '0.0.1'
+PKG_VERSION        = '0.0.2'
 PKG_FILE_NAME      = "#{PKG_NAME}-#{PKG_VERSION}"
 RUBY_FORGE_PROJECT = 'pluginaweek'
 
@@ -66,12 +66,10 @@ task :publish => [:pdoc, :release]
 desc 'Publish the release files to RubyForge.'
 task :release => [:gem, :package] do
   require 'rubyforge'
-
-  options = {'cookie_jar' => RubyForge::COOKIE_F}
-  options['password'] = ENV['RUBY_FORGE_PASSWORD'] if ENV['RUBY_FORGE_PASSWORD']
-  ruby_forge = RubyForge.new("./config.yml", options)
+  
+  ruby_forge = RubyForge.new
   ruby_forge.login
-
+  
   %w( gem tgz zip ).each do |ext|
     file = "pkg/#{PKG_FILE_NAME}.#{ext}"
     puts "Releasing #{File.basename(file)}..."
