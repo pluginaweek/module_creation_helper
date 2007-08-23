@@ -59,6 +59,6 @@ module PluginAWeek #:nodoc:
   end
 end
 
-class ::Module #:nodoc:
+::Module.class_eval do
   extend PluginAWeek::CoreExtensions::Module::ModuleCreationHelper
 end
