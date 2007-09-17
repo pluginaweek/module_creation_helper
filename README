@@ -1,6 +1,6 @@
 = module_creation_helper
 
-module_creation_helper adds a helper method for creating new modules and classes
++module_creation_helper+ adds a helper method for creating new modules and classes
 at runtime.
 
 == Resources
@@ -62,7 +62,7 @@ As you can see from output in this example, since the class has not yet been
 assigned to a constant, it is anonymous and does not yet have a name.
 
 To address these issues, the functionality is encapsulated into a new method,
-Module#create.  Since the method is defined in Module, it is also available to
+<tt>Module#create</tt>.  Since the method is defined in Module, it is also available to
 Class since Class inherits from Module.
 
 == Usage
