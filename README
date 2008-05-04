@@ -5,10 +5,6 @@ at runtime.
 
 == Resources
 
-Announcement
-
-* http://www.pluginaweek.org/2007/01/04/10-from-anonymous-to-named-and-back-again-a-tale-of-modules-and-classes
-
 Wiki
 
 * http://wiki.pluginaweek.org/Module_creation_helper
@@ -19,11 +15,11 @@ API
 
 Development
 
-* http://dev.pluginaweek.org/browser/trunk/plugins/ruby/module/module_creation_helper
+* http://dev.pluginaweek.org/browser/trunk/module_creation_helper
 
 Source
 
-* http://svn.pluginaweek.org/trunk/plugins/ruby/module/module_creation_helper
+* http://svn.pluginaweek.org/trunk/module_creation_helper
 
 == Description
 
@@ -104,4 +100,4 @@ block that defines the body of the class.  For example,
 
 == Dependencies
 
-This plugin does not depend on the presence of any other plugins.
+None.

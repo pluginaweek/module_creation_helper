@@ -1,9 +1,9 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-module TestParent
+module Ford
 end
 
-class TestSuperclass
+class Vehicle
   cattr_accessor :test_name
   cattr_accessor :test_inspect
   cattr_accessor :test_to_s
@@ -16,117 +16,181 @@ class TestSuperclass
 end
 
 class ModuleCreationHelperTest < Test::Unit::TestCase
-  def setup
-    TestSuperclass.test_name = nil
-    TestSuperclass.test_inspect = nil
-    TestSuperclass.test_to_s = nil
-  end
-  
-  def test_no_options_for_class
-    klass = Class.create('Foo')
-    assert_equal Object, klass.superclass
-    assert_equal Object, klass.parent
-    assert Object.const_defined?('Foo')
-  end
-  
-  def test_no_options_for_module
-    mod = Module.create('FooMod')
-    assert_equal Object, mod.parent
-    assert Object.const_defined?('FooMod')
-  end
-  
-  def test_invalid_option
+  def test_should_raise_exception_if_invalid_option_specified
     assert_raise(ArgumentError) {Class.create(nil, :invalid => true)}
   end
-  
-  def test_superclass_for_module
-    assert_raise(ArgumentError) {Module.create(nil, :superclass => Object)}
+end
+
+class ModuleCreationHelperForClassTest < Test::Unit::TestCase
+  def setup
+    @car = Class.create('Car')
   end
   
-  def test_superclass
-    klass = Class.create('Bar', :superclass => TestSuperclass)
-    assert_equal TestSuperclass, klass.superclass
-    assert_equal Object, klass.parent
-    assert Object.const_defined?('Bar')
+  def test_should_have_object_as_superclass
+    assert_equal Object, @car.superclass
   end
   
-  def test_parent_for_class
-    klass = Class.create('Baz', :parent => TestParent)
-    assert_equal Object, klass.superclass
-    assert_equal TestParent, klass.parent
-    assert TestParent.const_defined?('Baz')
+  def test_should_have_object_as_parent
+    assert_equal Object, @car.parent
+    assert Object.const_defined?('Car')
   end
   
-  def test_parent_for_module
-    mod = Module.create('BazMod', :parent => TestParent)
-    assert_equal TestParent, mod.parent
-    assert TestParent.const_defined?('BazMod')
+  def teardown
+    Object.send(:remove_const, 'Car')
+  end
+end
+
+class ModuleCreationHelperForClassWithSuperclassTest < Test::Unit::TestCase
+  def setup
+    @car = Class.create('Car', :superclass => Vehicle)
   end
   
-  def test_superclass_and_parent
-    klass = Class.create('Biz', :superclass => TestSuperclass, :parent => TestParent)
-    assert_equal TestSuperclass, klass.superclass
-    assert_equal TestParent, klass.parent
-    assert TestParent.const_defined?('Biz')
+  def test_should_inherit_from_superclass
+    assert_equal Vehicle, @car.superclass
   end
   
-  def test_name_before_evaluated
-    klass = Class.create('Waddle', :superclass => TestSuperclass)
-    assert_equal 'Waddle', TestSuperclass.test_name
+  def test_should_have_object_as_parent
+    assert_equal Object, @car.parent
+    assert Object.const_defined?('Car')
   end
   
-  def test_inspect_before_evaluated
-    klass = Class.create('Widdle', :superclass => TestSuperclass)
-    assert_equal 'Widdle', TestSuperclass.test_inspect
+  def test_should_evaluate_name_as_name
+    assert_equal 'Car', Vehicle.test_name
   end
   
-  def test_to_s_before_evaluated
-    klass = Class.create('Wuddle', :superclass => TestSuperclass)
-    assert_equal 'Wuddle', TestSuperclass.test_to_s
+  def test_should_evaluate_inspect_as_name
+    assert_equal 'Car', Vehicle.test_inspect
   end
   
-  def test_name_before_evaluated_with_parent
-    klass = Class.create('Waddle', :superclass => TestSuperclass, :parent => TestParent)
-    assert_equal 'TestParent::Waddle', TestSuperclass.test_name
+  def test_should_evaluate_to_s_as_name
+    assert_equal 'Car', Vehicle.test_to_s
   end
   
-  def test_inspect_before_evaluated_with_parent
-    klass = Class.create('Widdle', :superclass => TestSuperclass, :parent => TestParent)
-    assert_equal 'TestParent::Widdle', TestSuperclass.test_inspect
+  def teardown
+    Object.send(:remove_const, 'Car')
+  end
+end
+
+class ModuleCreationHelperForClassWithParentTest < Test::Unit::TestCase
+  def setup
+    @car = Class.create('Car', :parent => Ford)
   end
   
-  def test_to_s_before_evaluated_with_parent
-    klass = klass = Class.create('Wuddle', :superclass => TestSuperclass, :parent => TestParent)
-    assert_equal 'TestParent::Wuddle', TestSuperclass.test_to_s
+  def test_should_have_object_as_superclass
+    assert_equal Object, @car.superclass
   end
   
-  def test_subclass_of_dynamic_class
-    klass = Class.create('Foobar')
-    subclass = Class.create('Foobaz', :superclass => klass)
+  def test_should_be_nested_within_parent
+    assert_equal Ford, @car.parent
+    assert Ford.const_defined?('Car')
+  end
+  
+  def teardown
+    Ford.send(:remove_const, 'Car')
+  end
+end
+
+class ModuleCreationHelperForClassWithSuperclassAndParentTest < Test::Unit::TestCase
+  def setup
+    Vehicle.test_name = nil
+    Vehicle.test_inspect = nil
+    Vehicle.test_to_s = nil
     
-    assert_equal klass, subclass.superclass
-    assert_equal 'Foobaz', subclass.name
-    assert_equal 'Foobaz', subclass.inspect
-    assert_equal 'Foobaz', subclass.to_s
+    @car = Class.create('Car', :superclass => Vehicle, :parent => Ford)
   end
   
-  def test_with_block
-    klass = Class.create('ClassWithBlock', :superclass => TestSuperclass) do
-      def self.say_hello
-        'hello'
+  def test_should_inherit_from_superclass
+    assert_equal Vehicle, @car.superclass
+  end
+  
+  def test_should_be_nested_within_parent
+    assert_equal Ford, @car.parent
+    assert Ford.const_defined?('Car')
+  end
+  
+  def test_should_evaluate_name_as_name
+    assert_equal 'Ford::Car', Vehicle.test_name
+  end
+  
+  def test_should_evaluate_inspect_as_name
+    assert_equal 'Ford::Car', Vehicle.test_inspect
+  end
+  
+  def test_should_evaluate_to_s_as_name
+    assert_equal 'Ford::Car', Vehicle.test_to_s
+  end
+  
+  def teardown
+    Ford.send(:remove_const, 'Car')
+  end
+end
+
+class ModuleCreationHelperForClassWithDynamicSuperclassTest < Test::Unit::TestCase
+  def setup
+    @car = Class.create('Car')
+    @convertible = Class.create('Convertible', :superclass => @car)
+  end
+  
+  def test_should_inherit_from_superclass
+    assert_equal @car, @convertible.superclass
+  end
+  
+  def teardown
+    Object.send(:remove_const, 'Convertible')
+    Object.send(:remove_const, 'Car')
+  end
+end
+
+class ModuleCreationHelperForClassWithCustomMethods < Test::Unit::TestCase
+  def setup
+    @car = Class.create('Car', :superclass => Vehicle) do
+      def self.color
+        'red'
       end
     end
-    assert_equal 'hello', ClassWithBlock.say_hello
   end
   
-  def test_nested_class_with_superclass_with_same_name
-    klass = Class.create('Employee')
-    nested_class = Class.create('Employee', :superclass => klass, :parent => TestParent)
-    assert_equal klass, nested_class.superclass
+  def test_should_evaluate_methods
+    assert_equal 'red', Car.color
   end
   
-  private
-  def klass_with_id(klass)
-    "#<Class:0x#{(klass.object_id * 2).to_s(16)}>"
+  def teardown
+    Object.send(:remove_const, 'Car')
+  end
+end
+
+class ModuleCreationHelperForModuleTest < Test::Unit::TestCase
+  def setup
+    @autopilot = Module.create('Autopilot')
+  end
+  
+  def test_should_have_object_as_parent
+    assert_equal Object, @autopilot.parent
+    assert Object.const_defined?('Autopilot')
+  end
+  
+  def teardown
+    Object.send(:remove_const, 'Autopilot')
+  end
+end
+
+class ModuleCreationHelperForModuleWithSuperclassTest < Test::Unit::TestCase
+  def test_should_raise_an_exception
+    assert_raise(ArgumentError) {Module.create(nil, :superclass => Object)}
+  end
+end
+
+class ModuleCreationHelperForModuleWithParentTest < Test::Unit::TestCase
+  def setup
+    @autopilot = Module.create('Autopilot', :parent => Ford)
+  end
+  
+  def test_should_be_nested_within_parent
+    assert_equal Ford, @autopilot.parent
+    assert Ford.const_defined?('Autopilot')
+  end
+  
+  def teardown
+    Ford.send(:remove_const, 'Autopilot')
   end
 end
