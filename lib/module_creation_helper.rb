@@ -12,8 +12,8 @@ module PluginAWeek #:nodoc:
     #   end
     # 
     # Configuration options:
-    # <tt>superclass</tt> - The class to inherit from.  This only applies when using Class#create.  Default is Object.
-    # <tt>parent</tt> - The class/module that contains this module.  Default is Object.
+    # * +superclass+ - The class to inherit from.  This only applies when using Class#create.  Default is Object.
+    # * +parent+ - The class/module that contains this module.  Default is Object.
     # 
     # Examples:
     # 
