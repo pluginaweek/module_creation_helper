@@ -29,10 +29,8 @@ you will want to associate a runtime class with an actual name.
 
 Traditionally, you would create new classes like so:
 
-  >> c = Class.new
-  => #<Class:0x480e388>
-  >> Object.const_set('Foo', c)
-  => Foo
+  c = Class.new               # => #<Class:0x480e388>
+  Object.const_set('Foo', c)  # => Foo
 
 Although this isn't very hard, there are two problems:
 (1) It's a repetitive process that should be DRYed.
@@ -50,9 +48,9 @@ To understand the second problem, consider the following:
 When a class inherits from Foo, Ruby will invoke the +inherited+ callback.  For
 example,
 
-  >> c = Class.new(Foo)
-  inherited class: #<Class:0x47fb92c>, name:
-  => #<Class:0x47fb92c>
+  c = Class.new(Foo)
+  # inherited class: #<Class:0x47fb92c>, name:
+  # => #<Class:0x47fb92c>
 
 As you can see from output in this example, since the class has not yet been
 assigned to a constant, it is anonymous and does not yet have a name.
@@ -67,9 +65,9 @@ Class since Class inherits from Module.
 
 Using the same example as before,
 
-  >> c = Class.create('Bar', :superclass => Foo)
-  inherited class: Bar, name: Bar
-  => Bar
+  c = Class.create('Bar', :superclass => Foo)
+  # inherited class: Bar, name: Bar
+  # => Bar
 
 As you can see, the name of the class is now available during the +inherited+
 callback and is automatically assigned to the 'Bar' constant in Object.
@@ -79,24 +77,24 @@ callback and is automatically assigned to the 'Bar' constant in Object.
 In addition to specifying the superclass, you can also specify the parent
 module/class like so:
 
-  >> c = Class.create('Bar', :superclass => Foo, :parent => MyModule)
-  inherited class: MyModule::Bar, name: MyModule::Bar
-  => MyModule::Bar
+  c = Class.create('Bar', :superclass => Foo, :parent => MyModule)
+  # inherited class: MyModule::Bar, name: MyModule::Bar
+  # => MyModule::Bar
 
 === Defining class/module methods
 
 As you normally could when creating a new class, you can provide an additional
 block that defines the body of the class.  For example,
 
-  >> c = Class.create('Bar', :superclass => Foo, :parent => MyModule) do
-  ?>   def say_hello
-  ?>     'hello'
-  ?>   end
-  ?> end
-  inherited class: MyModule::Bar, name: MyModule::Bar
-  => Bar
-  >> Bar.new.say_hello
-  => "hello"
+  c = Class.create('Bar', :superclass => Foo, :parent => MyModule) do
+    def say_hello
+      'hello'
+    end
+  end
+  # inherited class: MyModule::Bar, name: MyModule::Bar
+  # => Bar
+  Bar.new.say_hello
+  # => "hello"
 
 == Dependencies
 
