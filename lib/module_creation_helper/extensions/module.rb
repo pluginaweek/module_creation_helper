@@ -26,6 +26,17 @@ module PluginAWeek #:nodoc:
         #   Class.create('Widdle', :parent => Waddle)                                 # => Waddle::Widdle
         #   Class.create('Woddle', :superclass => Waddle::Widdle, :parent => Waddle)  # => Waddle::Woddle
         #   Waddle::Woddle.superclass                                                 # => Waddle::Widdle
+        # 
+        # == Setting the parent
+        # 
+        # Rather than setting the parent directly using the +parent+ configuration
+        # option, you can specify it in the actual name of the class like so:
+        # 
+        #   Module.create('Foo::Bar')   # => Foo::Bar
+        # 
+        # This has the same effect as the following:
+        # 
+        #   Module.create('Bar', :parent => Foo)
         def create(name, options = {}, &block)
           # Validate the provided options
           invalid_options = options.keys - [:superclass, :parent]
