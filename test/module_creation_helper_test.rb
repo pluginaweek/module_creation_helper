@@ -4,9 +4,11 @@ module Ford
 end
 
 class Vehicle
-  cattr_accessor :test_name
-  cattr_accessor :test_inspect
-  cattr_accessor :test_to_s
+  class << self
+    attr_accessor :test_name
+    attr_accessor :test_inspect
+    attr_accessor :test_to_s
+  end
   
   def self.inherited(base)
     self.test_name = base.name
@@ -21,7 +23,7 @@ class ModuleCreationHelperTest < Test::Unit::TestCase
   end
 end
 
-class ModuleCreationHelperForClassTest < Test::Unit::TestCase
+class ClassTest < Test::Unit::TestCase
   def setup
     @car = Class.create('Car')
   end
@@ -31,7 +33,6 @@ class ModuleCreationHelperForClassTest < Test::Unit::TestCase
   end
   
   def test_should_have_object_as_parent
-    assert_equal Object, @car.parent
     assert Object.const_defined?('Car')
   end
   
@@ -40,7 +41,7 @@ class ModuleCreationHelperForClassTest < Test::Unit::TestCase
   end
 end
 
-class ModuleCreationHelperForClassWithSuperclassTest < Test::Unit::TestCase
+class ClassWithSuperclassTest < Test::Unit::TestCase
   def setup
     @car = Class.create('Car', :superclass => Vehicle)
   end
@@ -50,7 +51,6 @@ class ModuleCreationHelperForClassWithSuperclassTest < Test::Unit::TestCase
   end
   
   def test_should_have_object_as_parent
-    assert_equal Object, @car.parent
     assert Object.const_defined?('Car')
   end
   
@@ -71,7 +71,7 @@ class ModuleCreationHelperForClassWithSuperclassTest < Test::Unit::TestCase
   end
 end
 
-class ModuleCreationHelperForClassWithParentTest < Test::Unit::TestCase
+class ClassWithParentTest < Test::Unit::TestCase
   def setup
     @car = Class.create('Car', :parent => Ford)
   end
@@ -81,7 +81,6 @@ class ModuleCreationHelperForClassWithParentTest < Test::Unit::TestCase
   end
   
   def test_should_be_nested_within_parent
-    assert_equal Ford, @car.parent
     assert Ford.const_defined?('Car')
   end
   
@@ -90,7 +89,45 @@ class ModuleCreationHelperForClassWithParentTest < Test::Unit::TestCase
   end
 end
 
-class ModuleCreationHelperForClassWithSuperclassAndParentTest < Test::Unit::TestCase
+class ClassWithInferredParentTest < Test::Unit::TestCase
+  def setup
+    @car = Class.create('Ford::Car')
+  end
+  
+  def test_should_have_object_as_superclass
+    assert_equal Object, @car.superclass
+  end
+  
+  def test_should_be_nested_within_parent
+    assert Ford.const_defined?('Car')
+  end
+  
+  def teardown
+    Ford.send(:remove_const, 'Car')
+  end
+end
+
+class ClassWithInferredParentAndConfiguredParenTest < Test::Unit::TestCase
+  def setup
+    Module.create('Car', :parent => Ford)
+    @part = Class.create('Car::Part', :parent => Ford)
+  end
+  
+  def test_should_have_object_as_superclass
+    assert_equal Object, @part.superclass
+  end
+  
+  def test_should_be_nested_within_parent
+    assert Ford::Car.const_defined?('Part')
+  end
+  
+  def teardown
+    Ford::Car.send(:remove_const, 'Part')
+    Ford.send(:remove_const, 'Car')
+  end
+end
+
+class ClassWithSuperclassAndParentTest < Test::Unit::TestCase
   def setup
     Vehicle.test_name = nil
     Vehicle.test_inspect = nil
@@ -104,7 +141,6 @@ class ModuleCreationHelperForClassWithSuperclassAndParentTest < Test::Unit::Test
   end
   
   def test_should_be_nested_within_parent
-    assert_equal Ford, @car.parent
     assert Ford.const_defined?('Car')
   end
   
@@ -125,7 +161,7 @@ class ModuleCreationHelperForClassWithSuperclassAndParentTest < Test::Unit::Test
   end
 end
 
-class ModuleCreationHelperForClassWithDynamicSuperclassTest < Test::Unit::TestCase
+class ClassWithDynamicSuperclassTest < Test::Unit::TestCase
   def setup
     @car = Class.create('Car')
     @convertible = Class.create('Convertible', :superclass => @car)
@@ -141,7 +177,7 @@ class ModuleCreationHelperForClassWithDynamicSuperclassTest < Test::Unit::TestCa
   end
 end
 
-class ModuleCreationHelperForClassWithCustomMethods < Test::Unit::TestCase
+class ClassWithCustomMethodsTest < Test::Unit::TestCase
   def setup
     @car = Class.create('Car', :superclass => Vehicle) do
       def self.color
@@ -159,13 +195,12 @@ class ModuleCreationHelperForClassWithCustomMethods < Test::Unit::TestCase
   end
 end
 
-class ModuleCreationHelperForModuleTest < Test::Unit::TestCase
+class ModuleTest < Test::Unit::TestCase
   def setup
     @autopilot = Module.create('Autopilot')
   end
   
   def test_should_have_object_as_parent
-    assert_equal Object, @autopilot.parent
     assert Object.const_defined?('Autopilot')
   end
   
@@ -174,19 +209,18 @@ class ModuleCreationHelperForModuleTest < Test::Unit::TestCase
   end
 end
 
-class ModuleCreationHelperForModuleWithSuperclassTest < Test::Unit::TestCase
+class ModuleWithSuperclassTest < Test::Unit::TestCase
   def test_should_raise_an_exception
     assert_raise(ArgumentError) {Module.create(nil, :superclass => Object)}
   end
 end
 
-class ModuleCreationHelperForModuleWithParentTest < Test::Unit::TestCase
+class ModuleWithParentTest < Test::Unit::TestCase
   def setup
     @autopilot = Module.create('Autopilot', :parent => Ford)
   end
   
   def test_should_be_nested_within_parent
-    assert_equal Ford, @autopilot.parent
     assert Ford.const_defined?('Autopilot')
   end
   

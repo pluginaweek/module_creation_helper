@@ -27,16 +27,14 @@ module PluginAWeek #:nodoc:
         #   Class.create('Woddle', :superclass => Waddle::Widdle, :parent => Waddle)  # => Waddle::Woddle
         #   Waddle::Woddle.superclass                                                 # => Waddle::Widdle
         def create(name, options = {}, &block)
-          options.assert_valid_keys(
-            :superclass,
-            :parent
-          )
+          # Validate the provided options
+          invalid_options = options.keys - [:superclass, :parent]
+          raise ArgumentError, "Unknown key(s): #{invalid_options.join(", ")}" unless invalid_options.empty?
+          
+          # Validate usage of :superclass option
           raise ArgumentError, 'Modules cannot have superclasses' if options[:superclass] && self.to_s == 'Module'
           
-          options.reverse_merge!(
-            :superclass => Object,
-            :parent => Object
-          )
+          options = {:superclass => Object, :parent => Object}.merge(options)
           parent = options[:parent]
           superclass = options[:superclass]
           
@@ -46,12 +44,12 @@ module PluginAWeek #:nodoc:
             superclass = ''
           end
           
-          parent.class_eval <<-end_eval
+          mod = parent.class_eval <<-end_eval
             #{self.to_s.downcase} #{name}#{superclass}
+              self
             end
           end_eval
           
-          mod = parent.const_get(name)
           mod.class_eval(&block) if block_given?
           mod
         end

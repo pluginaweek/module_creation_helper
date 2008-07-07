@@ -1,5 +1,10 @@
 == master
 
+== 0.1.0 / 2008-07-06
+
+* Add support for specifying the parent class/module in the name of the class/module being created
+* Don't depend on active_support
+
 == 0.0.4 / 2008-05-05
 
 * Updated documentation
