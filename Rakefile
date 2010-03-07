@@ -6,7 +6,7 @@ require 'rake/gempackagetask'
 
 spec = Gem::Specification.new do |s|
   s.name              = 'module_creation_helper'
-  s.version           = '0.2.0'
+  s.version           = '0.2.1'
   s.platform          = Gem::Platform::RUBY
   s.summary           = 'Adds a helper method for creating new modules and classes at runtime'
   s.description       = s.summary
