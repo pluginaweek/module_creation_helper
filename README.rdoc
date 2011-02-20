@@ -7,7 +7,7 @@ at runtime.
 
 API
 
-* http://rdoc.info/projects/pluginaweek/module_creation_helper
+* http://rdoc.info/github/pluginaweek/module_creation_helper/master/frames
 
 Bugs
 
