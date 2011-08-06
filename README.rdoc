@@ -1,4 +1,4 @@
-= module_creation_helper
+= module_creation_helper http://travis-ci.org/pluginaweek/module_creation_helper.png
 
 +module_creation_helper+ adds a helper method for creating new modules and classes
 at runtime.
@@ -16,6 +16,10 @@ Bugs
 Development
 
 * http://github.com/pluginaweek/module_creation_helper
+
+Testing
+
+* http://travis-ci.org/pluginaweek/module_creation_helper
 
 Source
 
