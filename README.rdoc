@@ -21,6 +21,10 @@ Source
 
 * git://github.com/pluginaweek/module_creation_helper.git
 
+Mailing List
+
+* http://groups.google.com/group/pluginaweek-talk
+
 == Description
 
 Creating modules and classes at runtime isn't the easiest and most intuitive
