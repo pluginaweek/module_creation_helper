@@ -11,7 +11,7 @@ API
 
 Bugs
 
-* http://pluginaweek.lighthouseapp.com/projects/13281-module_creation_helper
+* http://github.com/pluginaweek/module_creation_helper/issues
 
 Development
 
